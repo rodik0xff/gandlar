@@ -20,6 +20,9 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'turbolinks', '2.2.1'
 gem 'jbuilder', '~> 1.2'
 
+gem 'pry'
+gem 'vacuum', '1.0.0'
+
 group :doc do
   gem 'sdoc', require: false
 end
