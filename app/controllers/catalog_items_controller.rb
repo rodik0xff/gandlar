@@ -4,30 +4,38 @@ class CatalogItemsController < ApplicationController
 
   def index
 
-    req = Vacuum.new('DE')
-    req.associate_tag = 'foobar'
-
-    @all_my_ids = Hash.new
-
-    CatalogItemsID["DE"].each do |key, value|
-
-      if not value.empty?
-        params = { 'BrowseNodeId'  => value }
-
-        @all_my_ids[key] = value
-       
-        res = req.browse_node_lookup(params)
-     
-        #binding.pry
-        
-        #aFile = File.new("Node_" + value + "_ID.xml" , "w")
-        #aFile.write(res.to_h.to_xml)
-        #aFile.close
-
-     end # if 
-
-   end # foreach
-
+    @root_catalog_items = Hash.new
+  
+    root_items = getCatalogItems("DE")
+    root_items.each do |root_item|
+      catalog_items = Hash.new
+      
+      col_count = 1
+      col_1 = ""
+      col_2 = ""
+      col_3 = ""
+      item_id = ""
+      root_item.catalog_items.each do |item|
+        item_id = item.item_id
+        if col_count == 1
+          col_1 = item.item_name
+        elsif col_count == 2
+            col_2 = item.item_name
+        elsif col_count == 3
+            col_3 = item.item_name
+            col_count = 0
+            catalog_items[item.item_id] = {col1: col_1, col2:col_2, col3:col_3}
+            col_1 = ""
+            col_2 = ""
+            col_3 = ""
+        end
+        col_count = col_count+1
+      end
+      if col_count > 1
+        catalog_items[item_id] = {col1: col_1, col2:col_2, col3:col_3}
+      end
+      
+      @root_catalog_items[root_item.item_id] = {name:root_item.item_description, subitems: catalog_items}
+    end
   end # def index
-
 end # class CatalogItemsController
